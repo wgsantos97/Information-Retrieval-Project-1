@@ -1,0 +1,2 @@
+Data/graphic_novel_reviews.json filter=lfs diff=lfs merge=lfs -text
+Data/RawData/graphic_novels_raw.json filter=lfs diff=lfs merge=lfs -text
