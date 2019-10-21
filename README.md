@@ -2,9 +2,7 @@
 
 ## Overview
 
-> Welcome to first Information Retrieval Project. Please use the Contents below to navigate to the relevant part. For details as to what each Part does, there is an accompanying Report.txt file in each Part folder.
-
-> The Data folder contains all the raw and processed data. For more information on its purpose, you may refer to Report1.txt located inside Part 1.
+> Welcome to the first Information Retrieval Project. Please use the Contents below to navigate to the relevant Part of this 3-Part Project. For details as to what each Part does, there are two accompanying Markdown Files, Description and Results, in each Part folder.
 
 ## Contents
 
@@ -15,8 +13,9 @@
         - graphic_novel_reviews.json
         - graphic_novels.json 
     2. Part I: Raw Data and Basic Statistics
+        - Description.md
         - main.py
-        - Report1.txt
+        - Report.md
     3. Part II: (Under Construction)
 
     4. Part III: (Under Construction)
