@@ -19,6 +19,17 @@
         - Description.md
         - main.py
         - Report.md
-    3. Part II: (Under Construction)
-
+    3. Part II: Data Aggregation & Parsing
+        > Data (not included)
+            - globalFreq.json
+            - invertedIdx.json
+            - topTerms.json
+        > Results (not included)
+            - globalFreq.txt
+            - invertedIdx.txt
+            - topTerms.txt
+        - Description.md
+        - main.py
+        - parseData.py
+        - Results.md
     4. Part III: (Under Construction)
