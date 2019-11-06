@@ -20,7 +20,7 @@ ___
 > The Results.md has a summary of the data parsing as well as the global frequency of the 5 search queries. These queries were written to simulate an art person who is trying to find a good graphic novel to read from DC comics.
 
 ## How to Generate Data & Results Folders
-> I made sure to separate main.py from parseData.py to improve testing efficienct. So to generate the Data and Results folder, simply run the parseData.py. Keep in mind that it must have the raw json files in Project-1 > Data in order for this to work. 
+> I made sure to separate main.py from parseData.py to improve testing efficienct. So to generate the Data and Results folders, simply run the parseData.py. Keep in mind that it must have the raw json files in Project-1 > Data in order for this to work. 
 > If you don't want to process all 500,000+ data pieces, look for a comment labeled 'NOTE' inside parseData.py. It will point you to a variable called 'self.population'. If you set this to a value n that is less than the population size, it will stop at the nth document.
 
 ## Notes
