@@ -61,7 +61,7 @@ class NLP_Data:
     def __init__(self, js):
         self.jsFile = js
         # location of the json "id" : "book name"
-        path = "../Data/" + "graphic_novels.json"
+        path = "../Data/graphic_novels.json"
         print(path)
         f = open(path, 'r')
         self.jsName = json.load(f)
@@ -71,11 +71,12 @@ class NLP_Data:
         # Data Gathering
         self.globalFreq = dict()    # term : globalFreq
         self.invertedIdx = dict()   # term : (name : termFreq)
-        self.library = dict()       # name : raw text
         self.topTerms = list()      # list of top terms
 
         # Statistics
-        self.population = 0    # Population
+        # NOTE You can change population to make it more manageable and the code will process the
+        # number set as long as it does not exceed the actual number of lines in the target json file.
+        self.population = 542338    # Default Population taken from Part I: 542338 entries
         self.vocabSize = 0     # Vocab Size
         self.maxTermFreq = 0   # highest frequency
         self.minTermFreq = 0   # lowest frequency
@@ -96,29 +97,29 @@ class NLP_Data:
         docs = list()
         f = open(self.path, 'r')
 
-        print("Populating Data")
+        print("Populating Data & Parsing Data...")
+        idx = 0
         for line in f:
-            self.population = self.population + 1
+            if(idx > self.population):
+                break
             rawJson = json.loads(line)
             doc = Doc(rawJson, self)
             if(doc.id in self.jsName):
                 doc.name = self.jsName[doc.id]
-            print("Appending Doc " + str(self.population) +
-                  " :\t" + doc.name + str(self.population))
+            
+            # Status Update in Terminal
+            idx=idx+1
+            print("Appending Doc " + str(self.population) + " :\t" + doc.name + str(self.population))
+            
             docs.append(doc)
+            self.globalFreq.update(doc.addToGlobalDict(self.globalFreq))
+            self.invertedIdx.update(doc.addToInvertedIndex(self.invertedIdx))
+
+            print("Doc Parsing Progress: " + str(round(idx/self.population*100, 2)) + "%")
 
         f.close()
 
-        idx = 0
-        print("Updating Frequencies")
-        for doc in docs:
-            self.library[doc.name] = doc.rawtext
-            self.globalFreq.update(doc.addToGlobalDict(self.globalFreq))
-            self.invertedIdx.update(doc.addToInvertedIndex(self.invertedIdx))
-            self.topTerms = sorted(self.globalFreq.items(), key=lambda kv: kv[1], reverse=True)
-            idx = idx + 1
-            print("Frequency Processing Progress: " + str(round(idx/self.population*100, 2)) + "%")
-
+        self.topTerms = sorted(self.globalFreq.items(), key=lambda kv: kv[1], reverse=True)
         return docs
 
     def getStatistics(self):
@@ -177,7 +178,7 @@ class NLP_Data:
         fileTarget = "Results.md"
         f = open(fileTarget, 'w')
         f.write("# JSON Stats")
-        f.write("\n\n\tTotal JSON Entries: " + str(self.population) + " entries")
+        f.write("\n\tTotal JSON Entries: " + str(self.population) + " entries")
         f.write("\n\tVocab Size: " + str(self.vocabSize) + " words")
         f.write("\n\tMax Term Frequency: " + str(self.maxTermFreq))
         f.write("\n\tMin Term Frequency: " + str(self.minTermFreq))

@@ -1,5 +1,4 @@
 # JSON Stats
-
 	Total JSON Entries: 542338 entries
 	Vocab Size: 576599 words
 	Max Term Frequency: ('story', 175811)
@@ -48,3 +47,33 @@
 	18.	hunter..yah : 1
 	19.	jilbaber : 1
 	20.	pinjemlah : 1
+
+## Query Results
+### Query: "Superman art series design"
+	1.	[ superman : 6522 ]
+	2.	[ art : 78079 ]
+	3.	[ series : 89133 ]
+	4.	[ design : 5747 ]
+
+### Query: "Batman Hush art"
+	1.	[ batman : 14206 ]
+	2.	[ hush : 371 ]
+	3.	[ art : 78079 ]
+
+### Query: "DC series good"
+	1.	[ dc : 8829 ]
+	2.	[ series : 89133 ]
+	3.	[ good : 95360 ]
+
+### Query: "Superman Batman comic crossover"
+	1.	[ superman : 6522 ]
+	2.	[ batman : 14206 ]
+	3.	[ comic : 79213 ]
+	4.	[ crossover : 3393 ]
+
+### Query: "Superman Batman best crossover comic"
+	1.	[ superman : 6522 ]
+	2.	[ batman : 14206 ]
+	3.	[ best : 33221 ]
+	4.	[ crossover : 3393 ]
+	5.	[ comic : 79213 ]
