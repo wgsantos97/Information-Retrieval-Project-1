@@ -12,13 +12,14 @@ from nltk.corpus import stopwords
 from nltk.stem import PorterStemmer
 import numpy as np
 import spacy
+from spacy.lang.en import English
 
 queries = [
-    "Superman art series design",
-    "Batman Hush art",
-    "DC series good",
-    "Superman Batman comic crossover",
-    "Superman Batman best crossover comic",
+    "Marvel",
+    "X-Men Marvel",
+    "X-Men Wolverine epic",
+    "Spiderman Avengers crossover",
+    "Spiderman Wolverine comic",
 ]
 
 # FUNCTIONS
@@ -48,35 +49,82 @@ def selectQuery():
     
     if(val=="0"):
         return "exit"
-    
-    try:
-        intval = int(val)-1
-        if intval>=len(queries):
-            return ""
-        runQuery(queries[intval])
-        return val
-    except ValueError:
+
+    intval = int(val)-1
+    if intval>=len(queries):
         return ""
+    runQuery(queries[intval])
+    return val
+
+def runQuery(query):
+    count_query, tf_idf = getTfIdf(query)
+
+    val = ""
+    while(val!="0"):
+        similarity = count_query.dot(tf_idf.transpose())
+        array_similarity = similarity.toarray()
+        index_order = np.argsort(array_similarity)
+        displayResults(query,index_order)
+        print("\n\nOptions: \n  1) Give User Feedback\n  2) Rerun Query\n  0) Exit")
+        val = input("Selection: ")
+        if(val=="1"):
+            index_rel,index_irel = getFeedback(index_order)
+            query_modified = count_query + 0.2 * tf_idf[index_rel,:].sum( axis = 0) - 0.2*tf_idf[index_irel,:].sum(axis = 0)
+            similarity_qm = query_modified.dot(tf_idf.transpose())
+            qm_similarity_array = similarity_qm.toarray()
+            index_order = np.argsort(qm_similarity_array) # from smallest to largest
+            displayResults(query,index_order,"Modified ")
+            val = "0"
+        if(val=="2"):
+            print("\nRerunning query!\n")
+    getFeedback(index_order)
+
+def getFeedback(idx_order):
+    global list_docs
+    top5 = idx_order[0][:5]
+    index_rel = list()
+    index_irel = list()
+    i=1
+    val=""
+    while(val!=0):
+        for idx in top5:
+            print(str(i) + ") " + str(list_docs[idx]))
+            feedback = input("Is this accurate?\n  1) Yes\n  2) No\nSelection: ")
+            if(feedback is "1"):
+                index_rel.append(idx)
+            else:
+                index_irel.append(idx)
+            i=i+1
+        
+        print("Relevant Indices: " + str(index_rel))
+        print("Irrelevant Indices: " + str(index_irel))
+        val = input("Is the above output correct?\n  1) Yes\n  2) No\nSelection: ")
+        if val=="1":
+            break
+        print("\n\nRerunning Feedback")
+        index_rel.clear()
+        index_irel.clear()
+        i=1
+    print("\nPrecision: " + str(float(len(index_rel)/5)))
+    return index_rel,index_irel
+
+def displayResults(query, idx_order, title="Query"):
+    global list_docs
+    top5 = idx_order[0][:5]
+    i=1
+    print(title + "Results for \"" + query + "\" :")
+    for idx in top5:
+        print(str(i) + ") " + str(list_docs[idx]))
+        i=i+1
 
 def getTfIdf(query):
     list_docs_text = [x.review_text for x in list_docs]
-    vectorizer = CountVectorizer(tokenizer = nlp_processing)
+    vectorizer = CountVectorizer()
     count_vect = vectorizer.fit_transform(list_docs_text)
-    count_query = vectorizer.transform(query)
+    count_query = vectorizer.transform([ query ])
     transformer = TfidfTransformer(norm = None, sublinear_tf = True)
     tf_idf = transformer.fit_transform(count_vect)
     return count_query, tf_idf
-
-def runQuery(query):
-    print("\n")
-    count_query, tf_idf = getTfIdf(query)
-    similarity = count_query.dot(tf_idf.transpose())
-    array_similarity = similarity.toarray()
-    index_order = np.argsort(array_similarity)
-    print("Doc Index: ", index_order, index_order.shape)
-    print("Query Similarity: ", array_similarity)
-    print("Ordered Similarity: ", array_similarity[0,index_order[0,::-1]])
-    print("Ordered Doc Index: ", index_order[0,::-1])
 
 def getDocs(filename, cap=50000):
     result = list()
@@ -103,16 +151,23 @@ class Review:
         self.review_text = js["review_text"]
     
     def __repr__(self):
-        return self.title
+        result = self.review_text.split()[:20]
+        result = self.title[:25] + "... -> " + " ".join(result) + "..."
+        return result
+
+    def __getitem__(self):
+        return ""
 
 # MAIN
 list_docs = list()
 def main():
+    global list_docs
+    
     target = "graphic_novel_final.json"
     list_docs = getDocs(target,1000)
-    input = ""
-    while input != "exit":
-        input = selectQuery()
+    val = ""
+    while val != "exit":
+        val = selectQuery()
     print("Program Terminating...")
 
 
