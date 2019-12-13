@@ -32,4 +32,9 @@
         - main.py
         - parseData.py
         - Results.md
-    4. Part III: (Under Construction)
+    4. Part III:
+        - Description.md
+        - graphic_novel_final.json
+        - main.py
+        - refiner.py
+        - results.md
