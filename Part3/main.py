@@ -74,10 +74,10 @@ def runQuery(query):
             qm_similarity_array = similarity_qm.toarray()
             index_order = np.argsort(qm_similarity_array) # from smallest to largest
             displayResults(query,index_order,"Modified ")
+            getFeedback(index_order)
             val = "0"
         if(val=="2"):
             print("\nRerunning query!\n")
-    getFeedback(index_order)
 
 def getFeedback(idx_order):
     global list_docs
@@ -164,7 +164,7 @@ def main():
     global list_docs
     
     target = "graphic_novel_final.json"
-    list_docs = getDocs(target,1000)
+    list_docs = getDocs(target,10000)
     val = ""
     while val != "exit":
         val = selectQuery()
