@@ -13,6 +13,7 @@ from nltk.stem import PorterStemmer
 import numpy as np
 import spacy
 from spacy.lang.en import English
+from scipy.sparse import csr_matrix
 
 queries = [
     "Marvel",
@@ -58,6 +59,7 @@ def selectQuery():
 
 def runQuery(query):
     count_query, tf_idf = getTfIdf(query)
+    print("1c_q: ", count_query.todense())
 
     val = ""
     while(val!="0"):
@@ -69,12 +71,13 @@ def runQuery(query):
         val = input("Selection: ")
         if(val=="1"):
             index_rel,index_irel = getFeedback(index_order)
-            query_modified = count_query + 0.2 * tf_idf[index_rel,:].sum( axis = 0) - 0.2*tf_idf[index_irel,:].sum(axis = 0)
-            similarity_qm = query_modified.dot(tf_idf.transpose())
-            qm_similarity_array = similarity_qm.toarray()
-            index_order = np.argsort(qm_similarity_array) # from smallest to largest
-            displayResults(query,index_order,"Modified ")
-            getFeedback(index_order)
+            a = 0.2 * tf_idf[index_rel,:].sum( axis = 0)
+            b = 0.2*tf_idf[index_irel,:].sum(axis = 0)
+            query_modified = count_query.todense() + a - b
+            similarity_qm = query_modified @ tf_idf.transpose()
+            index_order = np.argsort(similarity_qm) # from smallest to largest
+            index_order_array = csr_matrix(index_order).toarray()
+            displayResults(query,index_order_array,"Modified ")
             val = "0"
         if(val=="2"):
             print("\nRerunning query!\n")
@@ -108,9 +111,9 @@ def getFeedback(idx_order):
     print("\nPrecision: " + str(float(len(index_rel)/5)))
     return index_rel,index_irel
 
-def displayResults(query, idx_order, title="Query"):
+def displayResults(query, idx_order, title="Query",flag=False):
     global list_docs
-    top5 = idx_order[0][:5]
+    top5 = idx_order[0,:5]
     i=1
     print(title + "Results for \"" + query + "\" :")
     for idx in top5:
